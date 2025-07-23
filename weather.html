@@ -1,153 +1,81 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>สภาพอากาศ อบต.ม่อนจอง</title>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สภาพอากาศ – อบต.ม่อนจอง</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
+      font-family: 'Sarabun', sans-serif;
       margin: 0;
-      font-family: 'Kanit', sans-serif;
-      background-color: #f0f8ff;
+      padding: 20px;
+      background-color: #e6f2ff;
       color: #333;
-      transition: background-color 0.5s ease;
-      padding: 1rem;
-    }
-    .dark {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-    }
-    h1, h2 {
       text-align: center;
     }
     .card {
-      background: white;
-      padding: 1rem;
-      margin: 0.5rem auto;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      max-width: 500px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 480px;
     }
-    .dark .card {
-      background: #34495e;
+    h1, h2 {
+      color: #003366;
     }
-    .weather-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .weather-item {
+      margin: 6px 0;
+      font-size: 1.1em;
     }
-    .hourly-container, .forecast-container {
-      display: flex;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 1rem;
-    }
-    .hourly-card, .forecast-card {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 1rem;
-      min-width: 150px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .dark .hourly-card, .dark .forecast-card {
-      background: #3c5976;
-      color: white;
-    }
-    #time {
-      text-align: center;
-      margin-bottom: 1rem;
+    .weather-icon {
+      font-size: 1.4em;
     }
   </style>
 </head>
 <body>
-  <h1>สภาพอากาศ - อบต.ม่อนจอง</h1>
-  <div id="time"></div>
-  <div class="card weather-section" id="current-weather"></div>
-  <h2>ข้อมูลย้อนหลัง (6 ชั่วโมง)</h2>
-  <div class="hourly-container" id="hourly"></div>
-  <h2>พยากรณ์ 1 วันข้างหน้า</h2>
-  <div class="forecast-container" id="forecast"></div>
+
+  <h1>สภาพอากาศ – อบต.ม่อนจอง</h1>
+  <p id="datetime">อัปเดตล่าสุด: ...</p>
+
+  <div class="card">
+    <h2>อบต.ม่อนจอง</h2>
+    <div class="weather-item">🌡️ อุณหภูมิ: <span id="temp"></span> °C</div>
+    <div class="weather-item">💧 ความชื้น: <span id="humidity"></span>%</div>
+    <div class="weather-item">🌧️ ปริมาณฝน: <span id="rain"></span> mm</div>
+    <div class="weather-item">📊 ความดัน: <span id="pressure"></span> hPa</div>
+    <div class="weather-item">☁️ สภาพ: <span id="description"></span></div>
+  </div>
 
   <script>
     const API_KEY = '403d8de1a530aa8e08fa20b0e67b97c6';
-    const lat = 17.3803260675773;
-    const lon = 98.47738163491294;
-
-    function updateTime() {
-      const now = new Date();
-      const thaiTime = now.toLocaleString("th-TH", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      document.getElementById("time").textContent = `อัปเดตล่าสุด: ${thaiTime}`;
-    }
-
-    function applyTheme() {
-      const hour = new Date().getHours();
-      document.body.classList.toggle("dark", hour < 6 || hour >= 18);
-    }
+    const lat = 17.38035783463864;
+    const lon = 98.47743439343176;
 
     async function fetchWeather() {
-      updateTime();
-      applyTheme();
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=th`);
+      const data = await res.json();
 
-      const resCurrent = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=th`);
-      const current = await resCurrent.json();
+      document.getElementById('temp').textContent = data.main.temp.toFixed(1);
+      document.getElementById('humidity').textContent = data.main.humidity;
+      document.getElementById('pressure').textContent = data.main.pressure;
+      document.getElementById('description').textContent = data.weather[0].description;
 
-      document.getElementById("current-weather").innerHTML = `
-        <h3>${current.name}</h3>
-        <p>🌡️ อุณหภูมิ: ${current.main.temp} °C</p>
-        <p>💧 ความชื้น: ${current.main.humidity}%</p>
-        <p>🌧️ ปริมาณฝน: ${(current.rain?.["1h"] || 0)} mm</p>
-        <p>🌬️ ความดัน: ${current.main.pressure} hPa</p>
-        <p>☁️ สภาพ: ${current.weather[0].description}</p>
-      `;
+      // ฝน (บางครั้งไม่มีข้อมูล)
+      const rain = data.rain && data.rain['1h'] ? data.rain['1h'] : 0;
+      document.getElementById('rain').textContent = rain.toFixed(2);
 
-      const resHourly = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=th`);
-      const hourly = await resHourly.json();
-
-      // Hourly last 6 hours
       const now = new Date();
-      const last6 = hourly.list.filter(i => {
-        const t = new Date(i.dt * 1000);
-        return t < now && (now - t) <= 6 * 60 * 60 * 1000;
+      const dateTimeStr = now.toLocaleString('th-TH', { 
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
-
-      document.getElementById("hourly").innerHTML = last6.map(h => {
-        const time = new Date(h.dt * 1000).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
-        return `<div class="hourly-card">
-          <strong>${time}</strong>
-          <p>🌡️ ${h.main.temp}°C</p>
-          <p>💧 ${h.main.humidity}%</p>
-          <p>🌬️ ${h.main.pressure} hPa</p>
-        </div>`;
-      }).join("");
-
-      // Forecast 1 day ahead
-      const forecastTomorrow = hourly.list.filter(i => {
-        const t = new Date(i.dt * 1000);
-        return t.getDate() === now.getDate() + 1;
-      });
-
-      document.getElementById("forecast").innerHTML = forecastTomorrow.slice(0, 6).map(h => {
-        const time = new Date(h.dt * 1000).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
-        return `<div class="forecast-card">
-          <strong>${time}</strong>
-          <p>🌡️ ${h.main.temp}°C</p>
-          <p>💧 ${h.main.humidity}%</p>
-          <p>☁️ ${h.weather[0].description}</p>
-        </div>`;
-      }).join("");
+      document.getElementById('datetime').textContent = `อัปเดตล่าสุด: ${dateTimeStr}`;
     }
 
     fetchWeather();
-    setInterval(fetchWeather, 60000);
+    setInterval(fetchWeather, 60000); // รีเฟรชทุก 60 วินาที
   </script>
 </body>
 </html>
