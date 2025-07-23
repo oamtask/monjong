@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พยากรณ์อากาศ อบต.ม่อนจอง</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to top, #cce5ff, #ffffff);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        main {
+            padding: 1rem;
+            max-width: 800px;
+            margin: auto;
+        }
+        .weather-box {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007acc;
+            margin-bottom: 0.5rem;
+        }
+        .forecast-item {
+            background: #eef6ff;
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        พยากรณ์อากาศ อบต.ม่อนจอง
+    </header>
+    <main>
+        <div class="weather-box">
+            <h2>สภาพอากาศปัจจุบัน</h2>
+            <div id="current-weather">กำลังโหลดข้อมูล...</div>
+        </div>
+        <div class="weather-box">
+            <h2>พยากรณ์อากาศ 5 วันล่วงหน้า</h2>
+            <div id="forecast">กำลังโหลดข้อมูล...</div>
+        </div>
+    </main>
+
+    <script>
+        const apiKey = "403d8de1a530aa8e08fa20b0e67b97c6";
+        const lat = 17.3803260675773;
+        const lon = 98.47738163491294;
+
+        async function fetchWeather() {
+            const currentRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${apiKey}`);
+            const currentData = await currentRes.json();
+            document.getElementById("current-weather").innerHTML = `
+                <p><strong>อุณหภูมิ:</strong> ${currentData.main.temp}°C</p>
+                <p><strong>ความชื้น:</strong> ${currentData.main.humidity}%</p>
+                <p><strong>ความดันอากาศ:</strong> ${currentData.main.pressure} hPa</p>
+                <p><strong>สภาพอากาศ:</strong> ${currentData.weather[0].description}</p>
+            `;
+        }
+
+        async function fetchForecast() {
+            const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${apiKey}`);
+            const data = await res.json();
+            const forecastEl = document.getElementById("forecast");
+            const grouped = {};
+
+            data.list.forEach(item => {
+                const date = item.dt_txt.split(" ")[0];
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(item);
+            });
+
+            forecastEl.innerHTML = Object.entries(grouped).slice(0, 5).map(([date, items]) => {
+                const temps = items.map(i => i.main.temp);
+                const avgTemp = (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1);
+                const desc = items[0].weather[0].description;
+                return `<div class="forecast-item">
+                    <strong>${date}</strong>: ${desc}, เฉลี่ย ${avgTemp}°C
+                </div>`;
+            }).join("");
+        }
+
+        fetchWeather();
+        fetchForecast();
+    </script>
+</body>
+</html>
