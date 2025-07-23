@@ -51,10 +51,18 @@
       width: 40px;
       height: 40px;
     }
+    .timestamp {
+      text-align: center;
+      margin-top: -1rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <h1>🌤️ พยากรณ์อากาศ อบต.ม่อนจอง</h1>
+  <div class="timestamp" id="timestamp">อัปเดตล่าสุด: -</div>
 
   <div class="card" id="current">
     <div><span class="label">📍 พิกัด:</span> <span class="value">17.380326, 98.477381</span></div>
@@ -75,45 +83,56 @@
     const lat = 17.3803260675773;
     const lon = 98.47738163491294;
 
-    // Current weather
-    axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${API_KEY}`)
-      .then(res => {
-        const data = res.data;
-        document.getElementById('temp').textContent = data.main.temp;
-        document.getElementById('humidity').textContent = data.main.humidity;
-        document.getElementById('pressure').textContent = data.main.pressure;
-        document.getElementById('description').textContent = data.weather[0].description;
-        document.getElementById('rain').textContent = data.rain && data.rain['1h'] ? `${data.rain['1h']} มม.` : 'ไม่มี';
+    function fetchWeather() {
+      const now = new Date();
+      const formatted = now.toLocaleString('th-TH', {
+        dateStyle: 'full',
+        timeStyle: 'short'
       });
+      document.getElementById('timestamp').textContent = `อัปเดตล่าสุด: ${formatted}`;
 
-    // Forecast
-    axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${API_KEY}`)
-      .then(res => {
-        const forecastEl = document.getElementById('forecast');
-        const data = res.data.list;
-        const days = {};
-        data.forEach(item => {
-          const date = new Date(item.dt_txt);
-          const day = date.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
-          if (!days[day]) {
-            days[day] = item;
-          }
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${API_KEY}`)
+        .then(res => {
+          const data = res.data;
+          document.getElementById('temp').textContent = data.main.temp;
+          document.getElementById('humidity').textContent = data.main.humidity;
+          document.getElementById('pressure').textContent = data.main.pressure;
+          document.getElementById('description').textContent = data.weather[0].description;
+          document.getElementById('rain').textContent = data.rain && data.rain['1h'] ? `${data.rain['1h']} มม.` : 'ไม่มี';
         });
 
-        Object.keys(days).slice(0, 5).forEach(day => {
-          const f = days[day];
-          const icon = f.weather[0].icon;
-          const html = `
-            <div class="forecast-item">
-              <img src="https://openweathermap.org/img/wn/${icon}.png" alt="weather icon" />
-              <div>
-                <div class="label">${day}</div>
-                <div class="value">${f.main.temp}°C - ${f.weather[0].description}</div>
-              </div>
-            </div>`;
-          forecastEl.innerHTML += html;
+      axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=th&appid=${API_KEY}`)
+        .then(res => {
+          const forecastEl = document.getElementById('forecast');
+          forecastEl.innerHTML = '';
+          const data = res.data.list;
+          const days = {};
+          data.forEach(item => {
+            const date = new Date(item.dt_txt);
+            const day = date.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' });
+            if (!days[day]) {
+              days[day] = item;
+            }
+          });
+
+          Object.keys(days).slice(0, 5).forEach(day => {
+            const f = days[day];
+            const icon = f.weather[0].icon;
+            const html = `
+              <div class="forecast-item">
+                <img src="https://openweathermap.org/img/wn/${icon}.png" alt="weather icon" />
+                <div>
+                  <div class="label">${day}</div>
+                  <div class="value">${f.main.temp}°C - ${f.weather[0].description}</div>
+                </div>
+              </div>`;
+            forecastEl.innerHTML += html;
+          });
         });
-      });
+    }
+
+    fetchWeather();
+    setInterval(fetchWeather, 60000);
   </script>
 </body>
 </html>
