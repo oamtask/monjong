@@ -332,10 +332,10 @@
 <body>
 
     <div class="app-container">
-        <!-- โลโก้ (ดึงไฟล์จาก GitHub หรือถ้าไม่เจอจะดึงจาก Google Drive อัตโนมัติ) -->
+        <!-- โลโก้ (ดึงตรงจาก GitHub พร้อมคำสั่ง fetchpriority เพื่อเร่งความเร็วโหลด) -->
         <div class="logos">
-            <img src="logo1.png" alt="โลโก้ 1" onerror="this.onerror=null; this.src='https://drive.google.com/thumbnail?id=1QpLlHtQ7QfuHVVo470QS-sUzCWoqgnBp';">
-            <img src="logo2.png" alt="โลโก้ 2" onerror="this.onerror=null; this.src='https://drive.google.com/thumbnail?id=1t3v6hzftUBiKLegQFs_FIn15qVY3F05-';">
+            <img src="logo1.png" alt="โลโก้ 1" fetchpriority="high">
+            <img src="logo2.png" alt="โลโก้ 2" fetchpriority="high">
         </div>
 
         <div class="header">
@@ -372,7 +372,7 @@
                 <h3>เงื่อนไขการใช้จ่าย</h3>
                 <ul>
                     <li><strong>ยอดรวมรายเดือน 1,000 บาท</strong><br>ต้องใช้ให้หมดภายในเดือนนั้นๆ ทบไว้ใช้เดือนถัดไปไม่ได้</li>
-                    <li><strong>รัฐช่วยจ่ายสูงสุด 200 บาทต่อวัน</strong><br>หากใช้ไม่หมดจะทบยอดในวันถัดไป</li>
+                    <li><strong>ยอดรวมรายวันที่รัฐช่วยจ่ายสูงสุด 200 บาทต่อวัน</strong><br>หากใช้ไม่หมดจะทบยอดในวันถัดไป</li>
                 </ul>
             </div>
             <hr class="divider">
@@ -449,4 +449,3 @@
     </script>
 </body>
 </html>
-
