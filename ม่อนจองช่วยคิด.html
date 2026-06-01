@@ -103,4 +103,225 @@
             width: 100%;
             padding: 16px 60px 16px 20px;
             font-size: 32px;
-            font-weight:
+            font-weight: 700;
+            text-align: right;
+            border: 2px solid #E2E8F0;
+            border-radius: 16px;
+            background-color: #F8FAFC;
+            box-sizing: border-box;
+            color: var(--text-dark);
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.2s;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+        }
+        .input-wrapper .currency {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Calculation Grid */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px; 
+        }
+        .calc-box {
+            padding: 16px 12px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        .box-gov {
+            background-color: var(--gov-blue-light);
+            border-color: #E0F2FE;
+        }
+        .box-gov .box-title { color: var(--gov-blue); }
+        
+        .box-user {
+            background-color: var(--user-green-light);
+            border-color: #DCFCE7;
+        }
+        .box-user .box-title { color: var(--user-green); }
+        
+        .box-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .box-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Result Box */
+        .result-box {
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 20px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+            margin-top: 5px; 
+        }
+        .result-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        .result-value {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1; 
+        }
+        .result-value small {
+            font-size: 24px;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        /* Info Section */
+        .info-section {
+            background-color: var(--info-bg);
+            border: 1px solid var(--info-border);
+            border-radius: 16px;
+            padding: 20px;
+            font-size: 13px;
+        }
+        .info-group h3 {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+        .info-group ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .info-group ul li {
+            margin-bottom: 8px;
+        }
+        .info-group ul li:last-child {
+            margin-bottom: 0;
+        }
+        .info-group ul li strong {
+            color: var(--text-dark);
+            font-size: 13.5px;
+        }
+        .info-group p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .divider {
+            border: 0;
+            height: 1px;
+            background: var(--info-border);
+            margin: 16px 0;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 380px) {
+            .app-container {
+                padding: 25px 15px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .result-value {
+                font-size: 34px;
+            }
+            .box-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="logos">
+            <img src="logo1.png" alt="โลโก้ 1" onerror="this.onerror=null; this.src='https://drive.google.com/thumbnail?id=1QpLlHtQ7QfuHVVo470QS-sUzCWoqgnBp';">
+            <img src="logo2.png" alt="โลโก้ 2" onerror="this.onerror=null; this.src='https://drive.google.com/thumbnail?id=1t3v6hzftUBiKLegQFs_FIn15qVY3F05-';">
+        </div>
+
+        <div class="header">
+            <h1>ม่อนจองช่วยคิด<br>ไทยช่วยไทย <span>พลัส</span></h1>
+            <p>สัดส่วน 60/40</p>
+        </div>
+
+        <div class="input-section">
+            <label for="priceInput">มูลค่าสินค้าหรือบริการที่จ่ายวันนี้</label>
+            <div class="input-wrapper">
+                <input type="number" id="priceInput" placeholder="0.00" oninput="calculate()" min="0" step="1" inputmode="decimal">
+                <span class="currency">บาท</span>
+            </div>
+        </div>
+
+        <div class="calc-grid">
+            <div class="calc-box box-gov">
+                <div class="box-title">รัฐช่วยจ่ายออกให้ (60%)</div>
+                <div class="box-value" id="govPay">0.00</div>
+            </div>
+            <div class="calc-box box-user">
+                <div class="box-title">เงินที่เราต้องจ่ายเอง (40%)</div>
+                <div class="box-value" id="userPay">0.00</div>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <div class="result-title">ยอดเงินที่ต้องเติมในแอปฯ เป๋าตัง</div>
+            <div class="result-value"><span id="totalTopup">0.00</span><small>฿</small></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-group">
+                <h3>เงื่อนไขการใช้จ่าย</h3>
+                <ul>
+                    <li><strong>ยอดรวมรายเดือน 1,000 บาท</strong><br>ต้องใช้ให้หมดภายในเดือนนั้นๆ ทบไว้ใช้เดือนถัดไปไม่ได้</li>
+                    <li><strong>ไม่จำกัดยอดใช้จ่ายต่อวัน</strong><br>รัฐช่วยจ่าย 60% ของยอดเสมอ จนกว่าจะครบวงเงินรายเดือน</li>
+                </ul>
+            </div>
+            <hr class="divider">
+            <div class="info-group">
+                <h3>หมายเหตุ</h3>
+                <p>เริ่มใช้สิทธิไทยช่วยไทยพลัส วันที่ 1 มิ.ย. - 30 ก.ย. 69<br>ตั้งแต่เวลา 06.00-22.00 น. ของทุกวัน</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // ดึงค่าจากช่องกรอกข้อมูล
+            const inputVal = document.getElementById('priceInput').value;
+            const price = parseFloat(inputVal) || 0;
+
+            // คำนวณแบบ 60:40 ปกติ (ไม่มีจำกัดยอด)
+            const govShare = price * 0.60;
+            const userShare = price * 0.40;
+
+            const formatNumber = (num) => {
+                return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            // แสดงผลขึ้นหน้าจอ
+            document.getElementById('govPay').innerText = formatNumber(govShare);
+            document.getElementById('userPay').innerText = formatNumber(userShare);
+            document.getElementById('totalTopup').innerText = formatNumber(userShare);
+        }
+    </script>
+</body>
+</html>
