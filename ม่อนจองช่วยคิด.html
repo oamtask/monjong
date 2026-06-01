@@ -233,6 +233,15 @@
             margin: 16px 0;
         }
 
+        /* Footer Credit */
+        .footer-credit {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: -5px;
+            font-weight: 500;
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 380px) {
             .app-container {
@@ -292,7 +301,7 @@
                 <h3>เงื่อนไขการใช้จ่าย</h3>
                 <ul>
                     <li><strong>ยอดรวมรายเดือน 1,000 บาท</strong><br>ต้องใช้ให้หมดภายในเดือนนั้นๆ ทบไว้ใช้เดือนถัดไปไม่ได้</li>
-                    <li><strong>ไม่จำกัดยอดใช้จ่ายต่อวัน</strong><br>รัฐช่วยจ่าย 60% ของยอดเสมอ จนกว่าจะครบวงเงินรายเดือน</li>
+                    <li><strong>ยอดรวมรายวันที่รัฐช่วยจ่ายสูงสุด 200 บาทต่อวัน</strong><br>หากใช้ไม่หมดจะทบยอดในวันถัดไป</li>
                 </ul>
             </div>
             <hr class="divider">
@@ -300,6 +309,10 @@
                 <h3>หมายเหตุ</h3>
                 <p>เริ่มใช้สิทธิไทยช่วยไทยพลัส วันที่ 1 มิ.ย. - 30 ก.ย. 69<br>ตั้งแต่เวลา 06.00-22.00 น. ของทุกวัน</p>
             </div>
+        </div>
+        
+        <div class="footer-credit">
+            ระบบนี้จัดทำโดย งานประชาสัมพันธ์ อบต.ม่อนจอง
         </div>
     </div>
 
@@ -309,9 +322,15 @@
             const inputVal = document.getElementById('priceInput').value;
             const price = parseFloat(inputVal) || 0;
 
-            // คำนวณแบบ 60:40 ปกติ (ไม่มีจำกัดยอด)
-            const govShare = price * 0.60;
-            const userShare = price * 0.40;
+            // คำนวณแบบ 60:40
+            let govShare = price * 0.60;
+            let userShare = price * 0.40;
+
+            // ถ้ายอดที่รัฐจ่ายเกิน 200 บาท ให้ล็อกไว้ที่ 200 และที่เหลือเราจ่ายเองทั้งหมด
+            if (govShare > 200) {
+                govShare = 200;
+                userShare = price - 200;
+            }
 
             const formatNumber = (num) => {
                 return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -325,3 +344,4 @@
     </script>
 </body>
 </html>
+
